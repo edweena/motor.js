@@ -14,14 +14,15 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 * Link to motor.js in your HTML file’s head:
 ````<script type=“text/javascript” src=“motor.js”></script>````
 * In a script in your page, build up a sequence:
-````sillySequencer = new Motor()
+````javascript
+sillySequencer = new Motor()
 	// Create a new sequence
 	sillySequencer.newSeq(‘intro’, {
 		text:[“hey”,,,,,,,,“ho”,,,,,,,,,,,,”let’s”,,,,“go”,,,,,,,,],  
 		textSize: 	[50,,,,,,,, ,,,,100,,,,]  
 	})
 	// Play the sequence. If no argument is supplied, the last-created sequence will play
-	sillySequencer.play()
+sillySequencer.play()
 ````
 ### Documentation
 #### Properties
@@ -35,7 +36,8 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 ### Methods
 * **Motor.newSeq**( name *[string]*, sequence data *[object]*)
 * Creates a new sequence. Use the following syntax:
-````Motor.newSeq(‘intro’, {  
+````javascript
+Motor.newSeq(‘intro’, {  
 		kick: 			[1,,,,,,,, 1,,,,,,,,],  
 		hatOpen: 	[,,1,,1,,,,],  
 		hatClosed:[,,,,1,,,,]  
