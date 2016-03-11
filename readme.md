@@ -1,5 +1,5 @@
 ## Motor.js
-Motor is a multitrack step sequencer for the browser. It is inspired by MIDI sequencers in modern music software, but is flexible enough to control any audio or visual elements in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library while sending MIDI note numbers to a synthesis library, while adding DOM elements to a page, all in sync.
+Motor is a multitrack step sequencer for the browser. It is inspired by MIDI sequencers in modern music software, but is flexible enough to control any audio or visual elements in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
 
 ### Examples
 **[Realtime Bling](http://urmston.xyz/realtimebling)**
@@ -8,12 +8,11 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 - note numbers -> synthesizer and drum samples ([gibberish.js](https://github.com/charlieroberts/Gibberish))
 
 **[Youtube Remix](http://urmston.xyz/trackYoutubeRemix)**
-- Create a new song by jumping around in videos with the YouTube API
+- Create a new song by jump around in videos with the YouTube API
 - note numbers -> drum samples [gibberish.js](https://github.com/charlieroberts/Gibberish)
 
 ### Getting Started
 #### Simple Example: Add text to two separate divs
-Link to motor.js in your HTML file’s head:
 ```javascript
 <!doctype HTML>
 <html>
@@ -29,7 +28,7 @@ Link to motor.js in your HTML file’s head:
 // Instantiate a new Motor
 sillySequencer = new Motor()
 
-// Create a new sequence with two tracks, “text” and “textSize”
+// Create a new sequence with two tracks, “lyrics” and “drums”
 sillySequencer.newSeq(‘intro’, {
 	lyrics:[[“hey”,30],,,,,,,,[“ho”,50],,,,,,,,,,,,[”let’s”, 20],,,,[“go”,50],,,,,,,,],
 	drums:[["boom",20],,,,["bap",10],,,,["boom",20],,,,["bap",10],,,,]
@@ -67,10 +66,12 @@ sillySequencer.play()
 ### Documentation
 #### Motor {}
 **Properties**
-* **Motor.bpm** *[float]*   
+* **Motor.bpm** *[number]*   
 Motor will play sequences at this tempo. 120 by default.
-* **Motor.swing** *[float 0-1]*  
+* **Motor.swing** *[number 0-1]*  
 The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing.
+* **Motor.currentStep** *[number, read-only]*  
+The step number since the last sequence was launched.
 * **Motor.currentSeq** *[object, read-only]*  
 Always contains the current playing sequence. Don’t modify this.
 * **Motor.seqs** *[object]*
@@ -95,11 +96,11 @@ Starts playing a sequence. If no argument is supplied, the last-created sequence
 Define a function that is called whenever the sequence is started.
 * Motor.seqs[ sequence name ].**onStep**( function *[function]* )
 Define a function that is called on each step of a sequence.
-* Motor.seqs[ sequence name ].**follow**( followers *[object]* )
+* Motor.seqs[ sequence name ].**playNext**( sequences *[array [ string ] ]* )
 
 **Method Chaining**
 The Motor.Sequence object supports method chaining for quick sequence creation:
-```javascript
+````javascript
 Motor.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
@@ -113,6 +114,24 @@ Motor.newSeq(‘intro’, {
 })
 ```
 
+**Modifier Tracks**
+Motor includes rules for specially-named tracks. Use these by adding an _ to the end of an existing track name:
+````javascript
+Motor.newSeq(‘breakdown’, {  
+	bassline: 		[40,,,40,,,,,,,,,,,,],  
+	bassline_transpose:
+	hatOpen: 	[,,1,,1,,,,],  
+	background:	[,,,,"blue",,,,]
+})
+```
+
+**Poly**
+By default, Motor outputs whatever is at the current step of each track the current sequence. There are some instances (for example when playing a chord in a polyphonic synth) where it is useful to be able to loop through several values in one step and send them out individually. p() returns a special object that Motor parses in that way. p()'s arguments can be any type. Use it like this:
+````javascript
+Motor.newSeq(‘outro’, {  
+	synth: [,,,,,,,, p(40,43,45),,,,,,,,],  
+})
+````
 ### Tips
 Use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timers from slowing down when a tab is idle.
 ### License
