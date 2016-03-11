@@ -91,14 +91,14 @@ Motor.newSeq(‘intro’, {
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
 ### Motor.Sequence {}
-*Methods*
-* Motor.seqs.[sequence name].onLaunch( function *[function]* )
+**Methods**
+* Motor.seqs.[sequence name].**onLaunch**( function *[function]* )
 Define a function that is called whenever the sequence is started.
-* Motor.seqs.[sequence name].onStep( function *[function]* )
+* Motor.seqs.[sequence name].**onStep**( function *[function]* )
 Define a function that is called on each step of a sequence.
-* Motor.seqs.[sequence name].followers( followers *[object]* )
+* Motor.seqs.[sequence name].**followers**( followers *[object]* )
 
-*Method Chaining*
+**Method Chaining**
 The Motor.Sequence object supports method chaining for quick sequence creation:
 ```javascript
 Motor.newSeq(‘intro’, {  
@@ -110,7 +110,7 @@ Motor.newSeq(‘intro’, {
 }).onStep( function() {
 	//do something
 }).follow( function() {
-	//do something
+	64:['chorus','bridge']
 })
 ```
 
