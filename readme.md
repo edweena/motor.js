@@ -4,12 +4,13 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 ### Examples
 **[Realtime Bling](http://urmston.xyz/realtimebling)**
 - strings -> text-to-speech with [responsivevoice.js](link)
+- strings -> display text in the DOM
 - note numbers -> synthesizer and drum samples with [gibberish.js](https://github.com/charlieroberts/Gibberish)
-- Sending strings to a div in the DOM
 
 **[Youtube Remix](http://urmston.xyz/trackYoutubeRemix)**
 - Create a new song by jumping around in videos with the YouTube API
-	
+- note numbers -> drum samples [gibberish.js](https://github.com/charlieroberts/Gibberish)
+
 ### Getting Started
 #### Simple Example: Add text to two separate divs
 Link to motor.js in your HTML file’s head:
@@ -73,27 +74,46 @@ Motor will play sequences at this tempo. 120 by default.
 * **Motor.swing** *[float 0-1]*  
 The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing.
 * **Motor.currentSeq** *[object, read-only]*  
-* Always contains the current playing sequence. Don’t modify this.
+Always contains the current playing sequence. Don’t modify this.
+* **Motor.seqs** *[object]*
+Contains all Sequence objects
 *Methods*
-* **Motor.newSeq**( name *[string]*, sequence data *[object]*)
+* **Motor.newSeq**( name *[string]*, sequence *[object]*)
 Creates a new sequence. Use the following syntax:
 ```javascript
 Motor.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
-	hatClosed:	[,,,,1,,,,]
+	background:	[,,,,"blue",,,,]
 })
 ```
-* **Motor.globalOutputs**( outputs *[object]* )
 * **Motor.play**(sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
-Sequence{}
-#### Extra random math tools
-* **mtof**(midiNoteNumber *[float 0-127]* )
-Converts a MIDI note number to its corresponding frequency in Hz.
-* **ftom**(frequency *[float]*)
-Converts a frequency to its corresponding MIDI note number.
 
-### Dependencies
-You should use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timer throttling when tabs are in the background.
+### Motor.Sequence {}
+*Methods*
+* Motor.seqs.[sequence name].onLaunch( function *[function]* )
+Define a function that is called whenever the sequence is started.
+* Motor.seqs.[sequence name].onStep( function *[function]* )
+Define a function that is called on each step of a sequence.
+* Motor.seqs.[sequence name].followers( followers *[object]* )
+
+*Method Chaining*
+The Motor.Sequence object supports method chaining for quick sequence creation:
+```javascript
+Motor.newSeq(‘intro’, {  
+	kick: 		[1,,,,,,,, 1,,,,,,,,],  
+	hatOpen: 	[,,1,,1,,,,],  
+	background:	[,,,,"blue",,,,]
+}).onLaunch( function() {
+	//do something
+}).onStep( function() {
+	//do something
+}).follow( function() {
+	//do something
+})
+```
+
+### Tips
+Use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timers from slowing down when a tab is idle.
 ### License
