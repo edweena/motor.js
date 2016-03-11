@@ -14,7 +14,7 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 Link to motor.js in your HTML file’s head:
 ````<script type=“text/javascript” src=“motor.js”></script>````
 Example: add text to a <div> in the page and change its size 
-````javascript
+```javascript
 sillySequencer = new Motor()
 
 // Create a new sequence with two tracks, “text” and “textSize”
@@ -27,7 +27,8 @@ sillySequencer.newSeq(‘intro’, {
 
 // Play the sequence. If no argument is supplied, the last-created sequence will play
 sillySequencer.play()
-````
+```
+
 ### Documentation
 #### Properties
 * **Motor.bpm** *[float]*   
@@ -39,17 +40,17 @@ The amount of swing applied to sequences. A value of 0.5 produces a “straight�
 
 ### Methods
 * **Motor.newSeq**( name *[string]*, sequence data *[object]*)
-* Creates a new sequence. Use the following syntax:
-````javascript
+Creates a new sequence. Use the following syntax:
+```javascript
 Motor.newSeq(‘intro’, {  
 		kick: 			[1,,,,,,,, 1,,,,,,,,],  
 		hatOpen: 	[,,1,,1,,,,],  
 		hatClosed:[,,,,1,,,,]  
 })
-````
+```
 * **Motor.globalOutputs**( outputs *[object]* )
 * **Motor.play**(sequenceToPlay *[string, optional]* )
-* If no argument is supplied, the last-created sequence will play.
+Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
 ### Dependencies
 It is highly recommended that you use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timer throttling when tabs are in the background.
