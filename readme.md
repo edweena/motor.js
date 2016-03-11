@@ -8,7 +8,7 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 - Sending strings to a div in the DOM
 
 **[Youtube Remix](http://urmston.xyz/trackYoutubeRemix)**
-- send play positions to the YouTube API and create a new song by sampling YouTube videos
+- Create a new song by jumping around in videos with the YouTube API
 	
 ### Getting Started
 Link to motor.js in your HTML file’s head:
@@ -19,7 +19,8 @@ sillySequencer = new Motor()
 
 // Create a new sequence with two tracks, “text” and “textSize”
 sillySequencer.newSeq(‘intro’, {
-	text:[“hey”,,,,,,,,“ho”,,,,,,,,,,,,”let’s”,,,,“go”,,,,,,,,],  	textSize: 	[50,,,,,,,, ,,,,100,,,,]  
+	text:[“hey”,,,,,,,,“ho”,,,,,,,,,,,,”let’s”,,,,“go”,,,,,,,,],  	
+	textSize: 	[50,,,,,,,, ,,,,100,,,,]  
 })
 
 // Tell Motor where to send the data from each track
@@ -34,11 +35,11 @@ sillySequencer.play()
 * **Motor.bpm** *[float]*   
 Motor will play sequences at this tempo. 120 by default.
 * **Motor.swing** *[float 0-1]*  
-The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing
+The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing.
 * **Motor.currentSeq** *[object, read-only]*  
 * Always contains the current playing sequence. Don’t modify this.
 
-### Methods
+#### Methods
 * **Motor.newSeq**( name *[string]*, sequence data *[object]*)
 Creates a new sequence. Use the following syntax:
 ```javascript
@@ -51,6 +52,12 @@ Motor.newSeq(‘intro’, {
 * **Motor.globalOutputs**( outputs *[object]* )
 * **Motor.play**(sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
+
+#### Extra tools
+* **mtof**(midiNoteNumber *[float 0-127]* )
+Converts a MIDI note number to its corresponding frequency in Hz
+* **ftom**(frequency *[float]*)
+Converts a frequency to its corresponding MIDI note number
 
 ### Dependencies
 It is highly recommended that you use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timer throttling when tabs are in the background.
