@@ -11,10 +11,10 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 - send play positions to the YouTube API and create a new song by sampling YouTube videos
 	
 ### Getting Started
-Link to motor.js in your HTML file’s head:
-	<script type=“text/javascript” src=“motor.js”></script>
-In a script in your page, build up a sequence:
-	sillySequencer = new Motor()
+* Link to motor.js in your HTML file’s head:
+````<script type=“text/javascript” src=“motor.js”></script>````
+* In a script in your page, build up a sequence:
+````sillySequencer = new Motor()
 	// Create a new sequence
 	sillySequencer.newSeq(‘intro’, {
 		text:[“hey”,,,,,,,,“ho”,,,,,,,,,,,,”let’s”,,,,“go”,,,,,,,,],  
@@ -22,30 +22,28 @@ In a script in your page, build up a sequence:
 	})
 	// Play the sequence. If no argument is supplied, the last-created sequence will play
 	sillySequencer.play()
-
+````
 ### Documentation
-Everything resides within the Motor object
-
 #### Properties
-**Motor.bpm** [float]  
-Motor will play sequences at this tempo. 120 by default.
-**Motor.swing** [float 0-1]  
-The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing
-**Motor.currentSeq** [object, read-only]  
-Always contains the current playing sequence. Don’t modify this.
+* **Motor.bpm** *[float]*  
+* Motor will play sequences at this tempo. 120 by default.
+* **Motor.swing** *[float 0-1]*  
+* The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing
+* **Motor.currentSeq** *[object, read-only]*  
+* Always contains the current playing sequence. Don’t modify this.
 
 ### Methods
-**Motor.newSeq**( name [string], sequence data [object])
-Creates a new sequence. Use the following syntax:
-	Motor.newSeq(‘intro’, {  
+* **Motor.newSeq**( name *[string]*, sequence data *[object]*)
+* Creates a new sequence. Use the following syntax:
+````Motor.newSeq(‘intro’, {  
 		kick: 			[1,,,,,,,, 1,,,,,,,,],  
 		hatOpen: 	[,,1,,1,,,,],  
 		hatClosed:[,,,,1,,,,]  
-	})
-
-**Motor.globalOutputs**( outputs [object] )
-**Motor.play**(sequenceToPlay [string, optional] )
-If no argument is supplied, the last-created sequence will play.
+})
+````
+* **Motor.globalOutputs**( outputs *[object]* )
+* **Motor.play**(sequenceToPlay *[string, optional]* )
+* If no argument is supplied, the last-created sequence will play.
 
 ### Dependencies
 It is highly recommended that you use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timer throttling when tabs are in the background.
