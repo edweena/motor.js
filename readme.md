@@ -59,34 +59,35 @@ sillySequencer.setOutputs({
 )}
 
 // Play the sequence. If no argument is supplied, the last sequence will play.
+sillySequencer.bpm = 120
 sillySequencer.play()
 </script>
 </body>
 ```
 
 ### Documentation
-#### Properties
+#### Motor{}
+*Properties*
 * **Motor.bpm** *[float]*   
 Motor will play sequences at this tempo. 120 by default.
 * **Motor.swing** *[float 0-1]*  
 The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing.
 * **Motor.currentSeq** *[object, read-only]*  
 * Always contains the current playing sequence. Don’t modify this.
-
-#### Methods
+*Methods*
 * **Motor.newSeq**( name *[string]*, sequence data *[object]*)
 Creates a new sequence. Use the following syntax:
 ```javascript
 Motor.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
-	hatClosed:	[,,,,1,,,,]  
+	hatClosed:	[,,,,1,,,,]
 })
 ```
 * **Motor.globalOutputs**( outputs *[object]* )
 * **Motor.play**(sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
-
+Sequence{}
 #### Extra random math tools
 * **mtof**(midiNoteNumber *[float 0-127]* )
 Converts a MIDI note number to its corresponding frequency in Hz.
