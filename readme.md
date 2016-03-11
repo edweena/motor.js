@@ -66,22 +66,22 @@ sillySequencer.play()
 ### Documentation
 #### Motor {}
 **Properties**
-* **Motor.bpm** *[number]*   
+* **Motor.bpm** *[number]*     
 Motor will play sequences at this tempo. 120 by default.
-* **Motor.swing** *[number 0-1]*  
+* **Motor.swing** *[number 0-1]*     
 The amount of swing applied to sequences. A value of 0.5 produces a “straight” sequence with no swing.
-* **Motor.currentStep** *[number, read-only]*  
+* **Motor.currentStep** *[number, read-only]*     
 The step number since the last sequence was launched.
-* **Motor.currentSeq** *[object, read-only]*  
+* **Motor.currentSeq** *[object, read-only]*      
 Always contains the current playing sequence. Don’t modify this.
-* **Motor.seqs** *[object]*
+* **Motor.seqs** *[object, read-only]*     
 Contains all Sequence objects
 
-**Methods**
+**Methods**     
 * **Motor.newSeq**( name *[string]*, sequence *[object]*)
 Creates a new sequence. Use the following syntax:
 ```javascript
-Motor.newSeq(‘intro’, {  
+sillySequencer.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
 	background:	[,,,,"blue",,,"red",]
@@ -91,17 +91,35 @@ Motor.newSeq(‘intro’, {
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
 #### Sequence {}
-**Methods**
-* Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )
+**Methods**     
+* Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )     
 Define a function that is called whenever the sequence is started.
-* Motor.seqs[ sequence name ].**onStep**( function *[function]* )
+* Motor.seqs[ sequence name ].**onStep**( function *[function]* )    
 Define a function that is called on each step of a sequence.
-* Motor.seqs[ sequence name ].**playNext**( sequences *[array [ string ] ]* )
+* Motor.seqs[ sequence name ].**playNext**( sequences *[object]* )     
+Using playNext(), you can chain together sequences to form longer compositions. In the object, the key is a step value that when reached, will trigger the next sequence. If you include more than one sequence name in the array, the chance of playing each sequence is divided amongst them. To make one sequence more likely to play next, simply add more copies of its name to the array. Using this method, it is easy to create complex, chance based logic to control the flow of a composition.
+```javascript
+sillySequencer.newSeq(‘intro’, {  
+	kick: 		[1,,,,,,,, 1,,,,,,,,],  
+	hatOpen: 	[,,1,,1,,,,],  
+	background:	[,,,,"blue",,,,]
+}).playNext({
+	32: ['chorus']
+})
 
-**Method Chaining**
+sillySequencer.newSeq(‘chorus’, {  
+	kick: 		[1,,,,,,,, 1,,,,,,,,],  
+	hatOpen: 	[,,1,,1,,,,],  
+	background:	[,,,,"blue",,,,]
+}).playNext({
+	32: ['intro','verse']
+})
+````
+
+**Method Chaining**     
 The Motor.Sequence object supports method chaining for quick sequence creation:
 ````javascript
-Motor.newSeq(‘intro’, {  
+sillySequencer.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
 	background:	[,,,,"blue",,,,]
@@ -114,29 +132,29 @@ Motor.newSeq(‘intro’, {
 })
 ```
 
-**Track Layers**
+**Track Layers**     
 Motor includes specially-named tracks that modify existing tracks.
-A track can be layered upon by using the same root name and appending a keyword to subsequent tracks.
-* **_transpose** 
+A track can be layered upon by using the same root name and appending a keyword.
+* **_transpose**     
 This will modulate the track's midiTransposeAmount. By taking an existing melody and transposing it with the _transpose track layer you can achieve some interesting melodic effects, especially when the two layers are different lengths. Example:
-````javascript
-Motor.newSeq(‘breakdown’, {  
+```javascript
+sillySequencer.newSeq(‘breakdown’, {  
 	bassline: 		[40,,,40,,,,40,,,40,,,,],  
 	bassline_transpose: 	[0,,,5,,,]
 })
 ````
-* **_*[any number]* **
+* **_2**, **_3**, **_4**, etc.    
 This small yet powerful feature allows you to generate [polyrhythms](https://en.wikipedia.org/wiki/Polyrhythm) by creating several track layers of different lengths. Example:
-````javascript
-Motor.newSeq(‘breakdown’, {  
+```javascript
+sillySequencer.newSeq(‘breakdown’, {  
 	bassline: 	[40,,,,,,,,40,,,,,,,],  
 	bassline_2: 	[42,,,48,,,],
 	bassline_3: 	[38,,,,,,,,,,,,,,,,,,,,,,,42,,,,,,,]
 })
 ````
-**Poly**
+**Poly**     
 By default, Motor outputs whatever is at the current step of each track the current sequence. There are some instances (for example when playing a chord in a polyphonic synth) where it is useful to be able to loop through several values in one step and send them out individually. p() returns a special object that Motor parses in that way. p()'s arguments can be any type. Use it like this:
-````javascript
+```javascript
 Motor.newSeq(‘outro’, {  
 	synth: [,,,,,,,, p(40,43,45),,,,,,,,]  
 })
