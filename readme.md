@@ -118,14 +118,22 @@ Motor.newSeq(‘intro’, {
 Motor includes specially-named tracks that modify existing tracks.
 A track can be layered upon by using the same root name and appending a keyword to subsequent tracks.
 * **_transpose** 
-This will modulate the track's midiTransposeAmount. By taking an existing melody and transposing it with the _transpose track layer you can achieve some interesting effects, especially when the two layers are different lengths.
+This will modulate the track's midiTransposeAmount. By taking an existing melody and transposing it with the _transpose track layer you can achieve some interesting melodic effects, especially when the two layers are different lengths. Example:
 ````javascript
 Motor.newSeq(‘breakdown’, {  
 	bassline: 		[40,,,40,,,,40,,,40,,,,],  
 	bassline_transpose: 	[0,,,5,,,]
 })
 ````
-
+* **_*[any number]* **
+This small yet powerful feature allows you to generate [polyrhythms](https://en.wikipedia.org/wiki/Polyrhythm) by creating several track layers of different lengths. Example:
+````javascript
+Motor.newSeq(‘breakdown’, {  
+	bassline: 	[40,,,,,,,,40,,,,,,,],  
+	bassline_2: 	[42,,,48,,,],
+	bassline_3: 	[38,,,,,,,,,,,,,,,,,,,,,,,42,,,,,,,]
+})
+````
 **Poly**
 By default, Motor outputs whatever is at the current step of each track the current sequence. There are some instances (for example when playing a chord in a polyphonic synth) where it is useful to be able to loop through several values in one step and send them out individually. p() returns a special object that Motor parses in that way. p()'s arguments can be any type. Use it like this:
 ````javascript
