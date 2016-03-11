@@ -65,7 +65,7 @@ sillySequencer.play()
 ```
 
 ### Documentation
-#### Motor{}
+#### Motor {}
 **Properties**
 * **Motor.bpm** *[float]*   
 Motor will play sequences at this tempo. 120 by default.
@@ -75,6 +75,7 @@ The amount of swing applied to sequences. A value of 0.5 produces a “straight�
 Always contains the current playing sequence. Don’t modify this.
 * **Motor.seqs** *[object]*
 Contains all Sequence objects
+
 **Methods**
 * **Motor.newSeq**( name *[string]*, sequence *[object]*)
 Creates a new sequence. Use the following syntax:
@@ -85,16 +86,16 @@ Motor.newSeq(‘intro’, {
 	background:	[,,,,"blue",,,,]
 })
 ```
-* **Motor.play**(sequenceToPlay *[string, optional]* )
+* **Motor.play**( sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
-#### Sequence{}
+#### Sequence {}
 **Methods**
-* Motor.seqs.[sequence name].**onLaunch**( function *[function]* )
+* Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )
 Define a function that is called whenever the sequence is started.
-* Motor.seqs.[sequence name].**onStep**( function *[function]* )
+* Motor.seqs[ sequence name ].**onStep**( function *[function]* )
 Define a function that is called on each step of a sequence.
-* Motor.seqs.[sequence name].**followers**( followers *[object]* )
+* Motor.seqs[ sequence name ].**follow**( followers *[object]* )
 
 **Method Chaining**
 The Motor.Sequence object supports method chaining for quick sequence creation:
@@ -107,7 +108,7 @@ Motor.newSeq(‘intro’, {
 	//do something
 }).onStep( function() {
 	//do something
-}).follow( function() {
+}).playNext({
 	64:['chorus','bridge']
 })
 ```
