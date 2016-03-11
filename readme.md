@@ -13,20 +13,40 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 ### Getting Started
 Link to motor.js in your HTML file’s head:
 ````<script type=“text/javascript” src=“motor.js”></script>````
-Example: add text to a <div> in the page and change its size 
+Example: Add text to two separate divs
 ```javascript
+// Def
 sillySequencer = new Motor()
 
 // Create a new sequence with two tracks, “text” and “textSize”
 sillySequencer.newSeq(‘intro’, {
-	text:[“hey”,,,,,,,,“ho”,,,,,,,,,,,,”let’s”,,,,“go”,,,,,,,,],  	
-	textSize: 	[50,,,,,,,, ,,,,100,,,,]  
+	lyrics:[[“hey”,30],,,,,,,,[“ho”,50],,,,,,,,,,,,[”let’s”, 20],,,,[“go”,50],,,,,,,,],
+	drums:[["boom",20],,,,["bap",10],,,,["boom",20],,,,["bap",10],,,,]
 })
 
-// Tell Motor where to send the data from each track
+// Tell Motor where to send each track
+// You can send tracks to multiple outputs
+sillySequencer.setOutputs({
+	lyrics:['setTextOfDiv','console'],
+	drums:['setTextOfDiv','console'],
+	backgroundText:['addToBackground']
+)}
+
+// Do something with the data
+// The track name and the value of each step is sent to the output functions
+sillySequencer.globalOutputs({
+	setTextOfDiv: function(trackName,value) {
+   		var divToFill = document.getElementById(trackName)
+    	divToFill.innerHTML = value[0]
+    	divToFill.style.fontSize = value[1]
+    },
+    addToBody: function(trackName,text) {
+    	document.body.innerHTML += value
+    }
+})
 
 
-// Play the sequence. If no argument is supplied, the last-created sequence will play
+// Play the sequence. If no argument is supplied, the last sequence will play.
 sillySequencer.play()
 ```
 
@@ -53,7 +73,7 @@ Motor.newSeq(‘intro’, {
 * **Motor.play**(sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
-#### Extra tools
+#### Extra random math tools
 * **mtof**(midiNoteNumber *[float 0-127]* )
 Converts a MIDI note number to its corresponding frequency in Hz
 * **ftom**(frequency *[float]*)
