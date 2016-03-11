@@ -1,7 +1,7 @@
-## Motor.js
+# Motor.js
 Motor is a multitrack step sequencer for the browser. It is inspired by MIDI sequencers in modern music software, but is flexible enough to control any audio or visual elements in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
 
-### Examples
+## Examples
 **[Realtime Bling](http://urmston.xyz/realtimebling)**
 - strings -> text-to-speech ([responsivevoice.js](link))
 - strings -> display text in the DOM
@@ -11,7 +11,7 @@ Motor is a multitrack step sequencer for the browser. It is inspired by MIDI seq
 - Create a new song by jump around in videos with the YouTube API
 - note numbers -> drum samples [gibberish.js](https://github.com/charlieroberts/Gibberish)
 
-### Getting Started
+## Getting Started
 #### Simple Example: Add text to two separate divs
 ```javascript
 <!doctype HTML>
@@ -63,7 +63,7 @@ sillySequencer.play()
 </body>
 ```
 
-### Documentation
+## Documentation
 #### Motor {}
 **Properties**
 * **Motor.bpm** *[number]*     
@@ -159,6 +159,6 @@ Motor.newSeq(‘outro’, {
 	synth: [,,,,,,,, p(40,43,45),,,,,,,,]  
 })
 ````
-### Tips
+## Tips
 Use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timers from slowing down when a tab is idle.
-### License
+## License
