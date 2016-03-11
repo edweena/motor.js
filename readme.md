@@ -35,28 +35,26 @@ sillySequencer.newSeq(‘intro’, {
 	drums:[["boom",20],,,,["bap",10],,,,["boom",20],,,,["bap",10],,,,]
 })
 
-// Define the output functions
+// Define some functions to do something with the data
 // The track name and the value of each step is sent to the output functions
-sillySequencer.globalOutputs({
-	setTextOfDiv: function(trackName,value) {
-   		var divToFill = document.getElementById(trackName)
-   		//set the text of the div
-    		divToFill.innerHTML = value[0]
-    		//set the fontSize of the text
-    		divToFill.style.fontSize = value[1]
-    },
-    addToBody: function(trackName,value) {
+var setTextOfDiv = function(value, trackName) {
+   	var divToFill = document.getElementById(trackName)
+   	//set the text of the div
+    	divToFill.innerHTML = value[0]
+    	//set the fontSize of the text
+    	divToFill.style.fontSize = value[1]
+}
+
+var appendTextToBody = function(trackName,value) {
     	//append text to body
     	document.body.innerHTML += value
-    }
-})
+}
 
-// Tell Motor where to send each track
-// You can send tracks to multiple output functions
+// Tell Motor what function(s) to call with the data from each track
 sillySequencer.setOutputs({
-	lyrics:['setTextOfDiv','console'],
-	drums:['setTextOfDiv','console'],
-	backgroundText:['addToBackground']
+	lyrics:[setTextOfDiv,console],
+	drums:[setTextOfDiv,console],
+	backgroundText:[appendTextToBody]
 )}
 
 // Play the sequence. If no argument is supplied, the last sequence will play.
@@ -90,7 +88,7 @@ Motor.newSeq(‘intro’, {
 * **Motor.play**(sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
-### Motor.Sequence {}
+#### Sequence{}
 **Methods**
 * Motor.seqs.[sequence name].**onLaunch**( function *[function]* )
 Define a function that is called whenever the sequence is started.
