@@ -36,10 +36,10 @@ Always contains the current playing sequence. Don’t modify this.
 `Motor.newSeq( name [string], sequence data [object])`
 Creates a new sequence. Automatically fills the Motor.currentSeq. Use the following syntax:
 
-`Motor.newSeq(‘intro’, {
-kick: 		[1,,,,,,,, 1,,,,,,,,],
-hatOpen: 	[,,1,,1,,,,],
-hatClosed:[,,,,1,,,,]
+`Motor.newSeq(‘intro’, {  
+	kick: 		[1,,,,,,,, 1,,,,,,,,],  
+	hatOpen: 	[,,1,,1,,,,],  
+	hatClosed:[,,,,1,,,,]  
 })`
 
 `Motor.globalOutputs( outputs [object] )`
