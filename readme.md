@@ -96,25 +96,21 @@ Starts playing a sequence. If no argument is supplied, the last-created sequence
 * Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )     
 Define a function that is called whenever the sequence is started.
 * Motor.seqs[ sequence name ].**onStep**( stepNumber *[integer]*, function *[function]* OR sequenceName *[string]* OR sequenceNames *[array of strings]* )    
-Define a function or sequence that is called on a specific step of a sequence.
-Using onStep(), you can chain together sequences to form longer compositions. In the object, the key is a step value that when reached, will trigger the next sequence. If you include more than one sequence name in the array, the chance of playing each sequence is divided amongst them. To make one sequence more likely to play next, simply add more copies of its name to the array. Using this method, it is easy to create complex, chance based logic to control the flow of a composition.
+Define a function that is called or sequence that is played on a specific step of a sequence. It will only be 
+Using onStep(), you can chain together sequences to form longer compositions. The second array. If you include more than one sequence name in the array, the chance of playing each sequence is divided amongst them. To make one sequence more likely to play next, simply add more copies of its name to the array. Using this method, it is easy to create complex, chance based logic to control the flow of a composition.
 
 ```javascript
 sillySequencer.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
 	background:	[,,,,"blue",,,,]
-}).playNext({
-	32: ['chorus']
-})
+}).onStep(32, 'chorus')
 
 sillySequencer.newSeq(‘chorus’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
 	hatOpen: 	[,,1,,1,,,,],  
 	background:	[,,,,"blue",,,,]
-}).playNext({
-	32: ['intro','verse']
-})
+}).onStep(32, ['intro','verse'])
 ````
 * Motor.seqs[ sequence name ].**replaceClip**( track *[string]*, clip *[array]* )     
 Replaces the data in a specific track within a sequence with new data: 
@@ -135,9 +131,7 @@ sillySequencer.newSeq(‘intro’, {
 	//do something
 }).onStep( function() {
 	//do something
-}).playNext({
-	64:['chorus','bridge']
-})
+}).onStep(64, ['chorus','bridge'])
 ```
 
 **Track Layers**     
