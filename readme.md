@@ -90,6 +90,11 @@ sillySequencer.newSeq(‘intro’, {
 * **Motor.play**( sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
+#### Motor.currentSeq{}
+Always contains the current playing sequence. Don’t modify this.
+**Methods**
+* Motor.currentSeq.**replaceClip**( track *[string]*, clip *[array]* )
+Replaces the data in a specific track within a sequence with new
 #### Sequence {}
 **Methods**     
 * Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )     
