@@ -90,19 +90,15 @@ sillySequencer.newSeq(‘intro’, {
 * **Motor.play**( sequenceToPlay *[string, optional]* )
 Starts playing a sequence. If no argument is supplied, the last-created sequence will play.
 
-#### Motor.currentSeq{}
-Always contains the current playing sequence. Don’t modify this.
-**Methods**
-* Motor.currentSeq.**replaceClip**( track *[string]*, clip *[array]* )
-Replaces the data in a specific track within a sequence with new
+
 #### Sequence {}
 **Methods**     
 * Motor.seqs[ sequence name ].**onLaunch**( function *[function]* )     
 Define a function that is called whenever the sequence is started.
-* Motor.seqs[ sequence name ].**onStep**( function *[function]* )    
-Define a function that is called on each step of a sequence.
-* Motor.seqs[ sequence name ].**playNext**( sequences *[object]* )     
-Using playNext(), you can chain together sequences to form longer compositions. In the object, the key is a step value that when reached, will trigger the next sequence. If you include more than one sequence name in the array, the chance of playing each sequence is divided amongst them. To make one sequence more likely to play next, simply add more copies of its name to the array. Using this method, it is easy to create complex, chance based logic to control the flow of a composition.
+* Motor.seqs[ sequence name ].**onStep**( stepNumber *[integer]*, function *[function]* OR sequenceName *[string]* OR sequenceNames *[array of strings]* )    
+Define a function or sequence that is called on a specific step of a sequence.
+Using onStep(), you can chain together sequences to form longer compositions. In the object, the key is a step value that when reached, will trigger the next sequence. If you include more than one sequence name in the array, the chance of playing each sequence is divided amongst them. To make one sequence more likely to play next, simply add more copies of its name to the array. Using this method, it is easy to create complex, chance based logic to control the flow of a composition.
+
 ```javascript
 sillySequencer.newSeq(‘intro’, {  
 	kick: 		[1,,,,,,,, 1,,,,,,,,],  
@@ -120,6 +116,13 @@ sillySequencer.newSeq(‘chorus’, {
 	32: ['intro','verse']
 })
 ````
+* Motor.seqs[ sequence name ].**replaceClip**( track *[string]*, clip *[array]* )     
+Replaces the data in a specific track within a sequence with new data: 
+```javascript
+sillySeq.currentSeq.replaceClip('bass', [440,,,,440,,,,] )
+```
+* Motor.seqs[ sequence name ].**addClip**( track *[string]*, clip *[array]* )     
+Similar to replaceClip() but instead of overwriting the data in a track, it layers the new data on top of it. See **Track Layers**.
 
 **Method Chaining**     
 The Motor.Sequence object supports method chaining for quick sequence creation:
@@ -149,7 +152,7 @@ sillySequencer.newSeq(‘breakdown’, {
 })
 ````
 * **_2**, **_3**, **_4**, etc.    
-This small yet powerful feature allows you to generate [polyrhythms](https://en.wikipedia.org/wiki/Polyrhythm) by creating several track layers of different lengths. Example:
+This simple yet powerful feature allows you to generate [polyrhythms](https://en.wikipedia.org/wiki/Polyrhythm) by creating several track layers of different lengths. Example:
 ```javascript
 sillySequencer.newSeq(‘breakdown’, {  
 	bassline: 	[40,,,,,,,,40,,,,,,,],  
