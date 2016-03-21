@@ -10,7 +10,7 @@
 var Motor = function() {
 	this.timer = undefined
 	this.isPlaying = false
-	this._currentStep = 0
+	this.currentStep = 0
 	this.currentSeq = undefined
 	this.defaultDestination = undefined
 	this._bpm = 120
@@ -56,28 +56,26 @@ var Motor = function() {
 			self.tracks[trackName]._outputs = data[trackName]
 		}
 	}
-	//sequence constructor
-	this.Sequence = function(seqName) {
-
+	//sequence prototype
+	this.Sequence = function(seqName){
+		this.name = seqName
+		this.tracks = {}
+		this.followers = {}
+		this.onLaunch = function(onLaunchFunct){
+			self.seqs[seqName]._onLaunch = onLaunchFunct
+			return self.seqs[seqName]
+		}
+		this.onStep = function(onStepFunct){
+			self.seqs[seqName]._onStep = onStepFunct
+			return self.seqs[seqName]
+		}
+		this._onLaunch = function() {}
+		this._onStep = function() {}
 	}
 	this.newSeq = function(seqName, newSeq) {
 		//initialize new sequence
-		self.seqs[seqName] = {
-			name: seqName,
-			tracks: {},
-			followers: {},
-			//add 
-			onLaunch: function(onLaunchFunct){
-				self.seqs[seqName]._onLaunch = onLaunchFunct
-				return self.seqs[seqName]
-			},
-			onStep: function(onStepFunct){
-				self.seqs[seqName]._onStep = onStepFunct
-				return self.seqs[seqName]
-			},
-			_onLaunch: function(){},
-			_onStep: function(){}
-		}
+		self.seqs[seqName] = new self.Sequence(seqName)
+
 
 		for (trackName in newSeq) {
 			var cleanTrackName
@@ -113,8 +111,8 @@ var Motor = function() {
 			if(self.tracks.hasOwnProperty(cleanTrackName) == false) {
 				self.tracks[cleanTrackName] = new self.track(cleanTrackName)
 			}
-			//add follower method! Accepts a number of steps and an array of sequence names
-			self.seqs[seqName].addFollowers = function(followers){
+			//add after method! Accepts a number of steps and an array of sequence names
+			self.seqs[seqName].after = function(followers){
 				// for(stepAmt in followers) {
 				// 	self.seqs[seqName].followers[stepAmt] = followers[stepAmount]
 				// }
@@ -163,34 +161,44 @@ var Motor = function() {
         }
 	}
 	
-	this.globalOutputs = function(globalOuts) {
-		for (outputName in globalOuts) {
-			thisFunc = globalOuts[outputName]
-			self._globalOutputs[outputName] = thisFunc
-		}	
-		return self
-	}
 
+	// this.globalOutputs = function(globalOuts) {
+	// 	for (outputName in globalOuts) {
+	// 		thisFunc = globalOuts[outputName]
+	// 		self._globalOutputs[outputName] = thisFunc
+	// 	}	
+	// 	return self
+	// }
+	this.send = function(trackName,value) {
+	  var outputDests = self.tracks[trackName]._outputs
+	  for (i=0; i<outputDests.length; i++) {
+	 		self.sendTo(outputDests[k], trackName, value)
+	 	}
+	}
 	this.sendTo = function(destination,parameter,value){
-  		self._globalOutputs[destination](parameter,value)
+  		window[destination](parameter,value)
   		self.tracks[parameter]
  		return self		
  	}
 
  	this.stop = function() {
       clearTimeout(self.timer)
-      this._currentStep = 0
+      this.currentStep = 0
   }
 
+  this.pause = function() {
+      clearTimeout(self.timer)
+  }
+  
   this.play = function(seqToPlay) {
   	//optionally accept argument to play a specific sequence
   	if (seqToPlay != undefined) {
-  		self._currentStep = 0
+  		self.currentStep = 0
   		self.currentSeq = self.seqs[seqToPlay]
   	}
 
   	self.currentSeq._onStep()
-  	if (self._currentStep == 0) { 
+  	if (self.currentStep == 0) { 
   		console.log('sequence launched: '+self.currentSeq.name)
   		self.currentSeq._onLaunch() 
   	}
@@ -203,7 +211,7 @@ var Motor = function() {
   		//for each layer of track data
   		for(i=0;i<trackData.length;i++) {
   			
-  			var stepValue = trackData[i][self._currentStep%trackData[i].length]
+  			var stepValue = trackData[i][self.currentStep%trackData[i].length]
 
 				if(stepValue != NaN && stepValue != undefined ) {
 					
@@ -221,12 +229,12 @@ var Motor = function() {
 		        	for (k=0; k<outputDests.length; k++) {
 
 		         		self.sendTo(outputDests[k], trackName, thisChordNote)
-		          }
+		         	}
 		          self.tracks[trackName]._onTrigger()
 						}
 					} else { 
 						//if not chord
-							//if not array
+							//if not an object
 						if (typeof stepValue != 'object') {
 							//add midiTransposeAmount
 							stepValue = stepValue + self.currentSeq.tracks[trackName].midiTransposeAmt		
@@ -241,10 +249,10 @@ var Motor = function() {
 			}	
     }
       
-    this._currentStep++
+    this.currentStep++
 
     //SWING CALCULATOR
-    var swingSwitch = self._currentStep % 2
+    var swingSwitch = self.currentStep % 2
     var swingMultiplier
     if(swingSwitch != 1) {
     	swingMultiplier = 1 - self.swing
@@ -253,15 +261,14 @@ var Motor = function() {
     }
 
     var followers = self.currentSeq.followers
-    var stepMatch = followers[self._currentStep]
+    var stepMatch = followers[self.currentStep]
 
     if (stepMatch !== undefined) {
-			var theseFollowers = followers[self._currentStep]
+			var theseFollowers = followers[self.currentStep]
 			var selector = parseInt( Math.floor(Math.random() * theseFollowers.length))
     	var nextSeqName = theseFollowers[ selector ]
-
     	self.currentSeq = self.seqs[nextSeqName]
-			self._currentStep = 0
+			self.currentStep = 0
     }
 
     // ok ok ok do it this way:
@@ -288,73 +295,7 @@ var Motor = function() {
 }
 
 //HANDY FUNCTIONS /////////////////////////////////
-var mtof = function(note) {
-	return 440.0 * Math.pow(2, (note - 69.0) / 12.0)
-}
-var ftom = function(f){
-	return Math.round(12.0 * getBaseLog(f / 440.0, 2) + 69)
-}
 
-midiScale = function(note, rootNote, mode) {
-  //map input scale interval -> output scale interval
-  var scaleIntervals = {
-    0:0,
-    1:0,
-    2:2,
-    3:2,
-    4:4,
-    5:5,
-    6:5,
-    7:7,
-    8:7,
-    9:9,
-    10:9,
-    11:11,
-    12:12
-  }
-  //amount to offset the scale intervals for each root note
-  var rootOffsets =  {
-    'c': 0,
-    'c#':1,
-    'd': 2,
-    'd#': 3,
-    'e':4,
-    'f':5,
-    'f#':6,
-    'g':7,
-    'g#':8,
-    'a':9,
-    'a#':10,
-    'b':11
-  }
-  //amount to offset the scale intervals for each mode
-  var modeOffsets = {
-    major:0,
-    ionian:0,
-    minor:5,
-    aeolian:5,
-  }
-  
-  var octave = Math.floor(note / 12)
-  var pitchClass = note % 12
-
-  //get rootOffset amount
-  var rootOffset = rootOffsets[rootNote]
-  var modeOffset = modeOffsets[mode]
-
-  var octaveBonus = Math.floor((pitchClass + rootOffset + modeOffset) / 12)
-
-  //get scale interval based on input pitchClass and rootOffset
-  var newNote = scaleIntervals[(pitchClass + rootOffset + modeOffset) % 12 ] + ((octave+octaveBonus) * 12)
-
-
-  // var newNote = scaleIntervals[(pitchClass + rootOffset + modeOffsets[mode]) % 12 ] + (octave * 12)
-
-  // console.log((pitchClass + rootOffset) %13)
-  // console.log(pitchClass,octave)
-  // console.log(note,newNote)
-  return newNote
-}
 
 // IN-SEQUENCE GENERATORS /////////////////////////////////
 
