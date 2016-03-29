@@ -7,8 +7,8 @@ Motor.js is a Javascript step sequencer library for creating time-based work for
 - strings -> display text in the DOM
 - note numbers -> synthesizer and drum samples ([gibberish.js](https://github.com/charlieroberts/Gibberish))
 
-**[Youtube Remix](http://urmston.xyz/trackYoutubeRemix)**
-- Create a new song by jump around in videos with the YouTube API
+**[Youtube Remix](http://urmston.xyz/trackYoutubeRemix):** Create a new song by jumping around in YouTube videos
+- numbers -> YouTube API's seekTo()
 - note numbers -> drum samples [gibberish.js](https://github.com/charlieroberts/Gibberish)
 
 ## Getting Started
