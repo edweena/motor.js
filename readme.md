@@ -1,5 +1,5 @@
 # Motor.js
-Motor.js is a Javascript step sequencer library for creating time-based work for the browser. It is inspired by classic step sequencers and modern music software, but is flexible enough to control any audio or visual element in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
+Motor.js is a Javascript step sequencer library for creating time-based work for the browser. It is inspired by classic step sequencers and modern music software, but can control any element in a webpage: audio, visual, or anything else. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
 
 ## Examples
 **[Realtime Bling](http://urmston.xyz/realtimebling)**
