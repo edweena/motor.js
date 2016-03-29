@@ -1,5 +1,5 @@
 # Motor.js
-Motor is a multitrack step sequencer for the browser. It is inspired by MIDI sequencers in modern music software, but is flexible enough to control any audio or visual elements in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
+Motor.js is a Javascript step sequencer library for creating time-based work for the browser. It is inspired by classic step sequencers and modern music software, but is flexible enough to control any audio or visual element in a webpage. Play back sequences of numbers, strings, or objects at a given tempo, and use them to control anything you want. Send strings to a text-to-speech library, while sending MIDI notes to a synthesizer library, while adding DOM elements to the page, all in sync.
 
 ## Examples
 **[Realtime Bling](http://urmston.xyz/realtimebling)**
@@ -36,7 +36,7 @@ sillySequencer.newSeq(‘intro’, {
 
 // Define some functions to do something with the data
 // The track name and the value of each step is sent to the output functions
-var setTextOfDiv = function(value, trackName) {
+function setTextOfDiv(value, trackName) {
    	var divToFill = document.getElementById(trackName)
    	//set the text of the div
     	divToFill.innerHTML = value[0]
@@ -44,7 +44,7 @@ var setTextOfDiv = function(value, trackName) {
     	divToFill.style.fontSize = value[1]
 }
 
-var appendTextToBody = function(trackName,value) {
+function appendTextToBody(trackName,value) {
     	//append text to body
     	document.body.innerHTML += value
 }
@@ -112,15 +112,15 @@ sillySequencer.newSeq(‘chorus’, {
 	background:	[,,,,"blue",,,,]
 }).onStep(32, ['intro','verse'])
 ````
-* Motor.seqs[ sequence name ].**replaceClip**( track *[string]*, clip *[array]* )     
+* Motor.seqs[ sequence name ].**replaceClip**( track *[string]*, clip *[array]* ) *coming soon*     
 Replaces the data in a specific track within a sequence with new data: 
 ```javascript
 sillySeq.currentSeq.replaceClip('bass', [440,,,,440,,,,] )
 ```
-* Motor.seqs[ sequence name ].**addClip**( track *[string]*, clip *[array]* )     
+* Motor.seqs[ sequence name ].**addClip**( track *[string]*, clip *[array]* ) *coming soon*      
 Similar to replaceClip() but instead of overwriting the data in a track, it layers the new data on top of it. See **Track Layers**.
 
-**Method Chaining**     
+**Method Chaining**
 The Motor.Sequence object supports method chaining for quick sequence creation:
 ````javascript
 sillySequencer.newSeq(‘intro’, {  
@@ -128,10 +128,10 @@ sillySequencer.newSeq(‘intro’, {
 	hatOpen: 	[,,1,,1,,,,],  
 	background:	[,,,,"blue",,,,]
 }).onLaunch( function() {
-	//do something
-}).onStep( function() {
-	//do something
-}).onStep(64, ['chorus','bridge'])
+	//do something when clip is started
+}).onStep(32, function() {
+	//do something on step 32
+}).onStep(64, ['chorus','bridge']) // randomly pick between two sequences to play on step 64
 ```
 
 **Track Layers**     
