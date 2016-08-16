@@ -163,4 +163,3 @@ Motor.newSeq(‘outro’, {
 ````
 ## Tips
 Use [HackTimer.js](https://github.com/turuslan/HackTimer) to prevent timers from slowing down when a tab is idle.
-## License
