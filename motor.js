@@ -1,13 +1,9 @@
 //MOTOR MULTITRACK SEQUENCE ENGINE
 //AN EASY WAY TO READ AND PLAY BACK ARRAYS OF DIFFERENT LENGTHS AT A GIVEN TEMPO
 
-//FUTURE FEATURES:
-//FOLLOW ACTIONS BASED ON CHANCE
-//PLAYING A SEQUENCE FORWARDS OR BACKWARDS
-//RANDOMNESS/"ERROR"
-//INDEPENDENT RESOLUTIONS PER TRACK
+//USE AT YOUR OWN RISK
 
-var Motor = function() {
+function Motor() {
 	this.timer = undefined
 	this.isPlaying = false
 	this.currentStep = 0
@@ -21,7 +17,7 @@ var Motor = function() {
 	this.swing = 0 
 	this.toolsShown = false
 	self = this
-
+	this.debug = false
 	this.seqs = { //seqs will end up here
 	} 
 	this.tracks = { //tracks will end up here
@@ -47,26 +43,39 @@ var Motor = function() {
 			return self.tracks[trackName]
 		}
 	}
-	self.setOutputs = function(data){
-		for (trackName in data) {
+	self.setOutputs = function(outputs){
+		for (trackName in outputs) {
 			if(self.tracks.hasOwnProperty(trackName) == false) {
 			//create top-level track objects if they don't exist yet
 				self.tracks[trackName] = new self.track(trackName)
 			}
-			self.tracks[trackName]._outputs = data[trackName]
+			var theseOutputs = outputs[trackName]
+			if ( Array.isArray(outputs[trackName] !== true) ) {
+				theseOutputs = [theseOutputs]
+			}
+			self.tracks[trackName]._outputs = theseOutputs
 		}
 	}
 	//sequence prototype
 	this.Sequence = function(seqName){
 		this.name = seqName
 		this.tracks = {}
-		this.followers = {}
 		this.onLaunch = function(onLaunchFunct){
 			self.seqs[seqName]._onLaunch = onLaunchFunct
 			return self.seqs[seqName]
 		}
-		this.onStep = function(onStepFunct){
-			self.seqs[seqName]._onStep = onStepFunct
+		this._onStepFunctions = {}
+		this._onStepSeqTriggers = {}
+		this.onStep = function(stepNumber, onStepStuff){
+			
+			if ( typeof onStepStuff === 'string') {
+				this._onStepSeqTriggers[stepNumber] = [onStepStuff]
+			} else if ( Array.isArray(onStepStuff) ) {
+				this._onStepSeqTriggers[stepNumber] = onStepStuff
+			} else {
+				//thennn it must be a function
+				self.seqs[seqName]._onStepFunctions[stepNumber] = onStepStuff
+			}
 			return self.seqs[seqName]
 		}
 		this._onLaunch = function() {}
@@ -76,56 +85,48 @@ var Motor = function() {
 		//initialize new sequence
 		self.seqs[seqName] = new self.Sequence(seqName)
 
+		if (newSeq !== undefined) {
+			if (Object.keys(newSeq).length > 0) {
+				for (trackName in newSeq) {
+					var cleanTrackName
+					var stringToTest = parseInt(trackName.split('_')[1])
+						
+					if ( isNaN(stringToTest) ) {
+						cleanTrackName = trackName
+					} else {
+						//if trackName is a string, e.g. xylophone_transpose, trim off layer number
+						cleanTrackName = trackName.split('_')[0]
+					}
 
-		for (trackName in newSeq) {
-			var cleanTrackName
-			var stringToTest = parseInt(trackName.split('_')[1])
-				
-			if ( isNaN(stringToTest) ) {
-				cleanTrackName = trackName
-			} else {
-				//if trackName is a string, e.g. xylophone_transpose, trim off layer number
+					//if data hasn't been added in this track in this sequence already
+					if (self.seqs[seqName].tracks[cleanTrackName] == undefined){
+						// create new track in sequence
+						self.seqs[seqName].tracks[cleanTrackName] = {
+							data: [
+								newSeq[trackName]
+							],
+							resolution: 1/16,
+							midiTransposeAmt: 0
+						}
 
-				cleanTrackName = trackName.split('_')[0]
-			}
+					} else {
+						//get number of slots in track
+						var numberOfLayers = self.seqs[seqName].tracks[cleanTrackName].data.length
+						//append new layer to data[]
+						self.seqs[seqName].tracks[cleanTrackName].data[numberOfLayers] = newSeq[trackName]
+					}
 
-			//if data hasn't been added in this track in this sequence already
-			if (self.seqs[seqName].tracks[cleanTrackName] == undefined){
-				// create new track in sequence
-				self.seqs[seqName].tracks[cleanTrackName] = {
-					data: [
-						newSeq[trackName]
-					],
-					resolution: 1/16,
-					midiTransposeAmt: 0
+					//create top-level track objects if they don't exist yet
+					if(self.tracks.hasOwnProperty(cleanTrackName) == false) {
+						self.tracks[cleanTrackName] = new self.track(cleanTrackName)
+					}
 				}
-
-			} else {
-				//get number of slots in track
-				var numberOfLayers = self.seqs[seqName].tracks[cleanTrackName].data.length
-				//append new layer to data[]
-				self.seqs[seqName].tracks[cleanTrackName].data[numberOfLayers] = newSeq[trackName]
-			}
-
-			//create top-level track objects if they don't exist yet
-			if(self.tracks.hasOwnProperty(cleanTrackName) == false) {
-				self.tracks[cleanTrackName] = new self.track(cleanTrackName)
-			}
-			//add after method! Accepts a number of steps and an array of sequence names
-			self.seqs[seqName].after = function(followers){
-				// for(stepAmt in followers) {
-				// 	self.seqs[seqName].followers[stepAmt] = followers[stepAmount]
-				// }
-				self.seqs[seqName].followers = followers
-				return self.seqs[seqName]
 			}
 		} 
 		//automatically make this the currentSeq
 		self.currentSeq = self.seqs[seqName]
     return self.seqs[seqName]
 	}
-
-
 
 	this.newTrack = function(trackName, output) {
 		//if not an array, make it so
@@ -160,30 +161,26 @@ var Motor = function() {
           motor.currentSeq.tracks[parameter].midiTransposeAmt = value
         }
 	}
-	
 
-	// this.globalOutputs = function(globalOuts) {
-	// 	for (outputName in globalOuts) {
-	// 		thisFunc = globalOuts[outputName]
-	// 		self._globalOutputs[outputName] = thisFunc
-	// 	}	
-	// 	return self
-	// }
 	this.send = function(trackName,value) {
-	  var outputDests = self.tracks[trackName]._outputs
-	  for (i=0; i<outputDests.length; i++) {
-	 		self.sendTo(outputDests[k], trackName, value)
+	  	var outputDests = self.tracks[trackName]._outputs
+	  	for (i=0; i<outputDests.length; i++) {
+	 		self.sendTo(outputDests[i], trackName, value)
 	 	}
 	}
 	this.sendTo = function(destination,parameter,value){
-  		window[destination](parameter,value)
-  		self.tracks[parameter]
+		if (self.debug === true) {
+			console.log(arguments)
+		}
+  		destination(parameter,value)
+  		self.tracks[parameter]._onTrigger()
  		return self		
  	}
 
  	this.stop = function() {
       clearTimeout(self.timer)
       this.currentStep = 0
+      console.log('stopped') 
   }
 
   this.pause = function() {
@@ -193,6 +190,8 @@ var Motor = function() {
   this.play = function(seqToPlay) {
   	//optionally accept argument to play a specific sequence
   	if (seqToPlay != undefined) {
+
+  		window.clearTimeout(self.timer)
   		self.currentStep = 0
   		self.currentSeq = self.seqs[seqToPlay]
   	}
@@ -234,8 +233,8 @@ var Motor = function() {
 						}
 					} else { 
 						//if not chord
-							//if not an object
-						if (typeof stepValue != 'object') {
+							//if a number
+						if (typeof stepValue === 'number') {
 							//add midiTransposeAmount
 							stepValue = stepValue + self.currentSeq.tracks[trackName].midiTransposeAmt		
 						}
@@ -243,7 +242,7 @@ var Motor = function() {
 	        	for (i=0; i<outputDests.length; i++) {
 	         		self.sendTo(outputDests[i], trackName, stepValue)
 	          }
-	          self.tracks[trackName]._onTrigger()
+	          
 					}
         }
 			}	
@@ -260,13 +259,18 @@ var Motor = function() {
     	swingMultiplier = self.swing
     }
 
-    var followers = self.currentSeq.followers
-    var stepMatch = followers[self.currentStep]
+    //check for, trigger onStepFunctions 
+    var functionToCall = self.currentSeq._onStepFunctions[ self.currentStep ]
+    if (functionToCall !== undefined) {
+    	//trigger function
+			functionToCall()
+    }
 
-    if (stepMatch !== undefined) {
-			var theseFollowers = followers[self.currentStep]
-			var selector = parseInt( Math.floor(Math.random() * theseFollowers.length))
-    	var nextSeqName = theseFollowers[ selector ]
+    //check for, trigger onStepSequenceTriggers
+    var seqsToTrigger = self.currentSeq._onStepSeqTriggers[ self.currentStep ]
+    if (seqsToTrigger !== undefined) {
+			var selector = parseInt( Math.floor(Math.random() * seqsToTrigger.length))
+    	var nextSeqName = seqsToTrigger[ selector ]
     	self.currentSeq = self.seqs[nextSeqName]
 			self.currentStep = 0
     }
@@ -294,9 +298,6 @@ var Motor = function() {
  	return self
 }
 
-//HANDY FUNCTIONS /////////////////////////////////
-
-
 // IN-SEQUENCE GENERATORS /////////////////////////////////
 
 // POLY e.g. p(100,200,250)
@@ -314,3 +315,7 @@ var p = function() {
 }
 
 //replace 'rF' with random float btwn 0-1
+
+function motorConsole(trackName,value){
+	console.log(trackName,value)
+}
